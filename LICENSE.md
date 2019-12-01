@@ -13,14 +13,14 @@ were made.  If you remix, transform, or build upon this
 material, you must distribute your contributions under the same
 license as the original.
 
-The coil spring used in this object is the:
+The coil spring used in this object is the
 "[COZI Heavy Duty Mesh Spring - 10 Coil, Black,
 FULL PERM](https://marketplace.secondlife.com/p/Heavy-Duty-Mesh-Spring-10-Coil-Black-FULL-PERM/6568283)"
 model available in the Second Life Marketplace.  Please see that
 page for the license and conditions of use for that component. 
 As a Second Life object, it is not included in this repository.
 
-The sound effects are free clips available from:
+The sound effects are free clips available from
 [SoundEffects+](https://www.soundeffectsplus.com/).
 The launch sound is
 ["Comical
