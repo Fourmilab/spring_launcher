@@ -138,7 +138,7 @@
                 llListenRemove(commandH);
                 commandChannel = newch;
                 commandH = llListen(commandChannel, "", NULL_KEY, "");
-                tawk("Listening on /" + (string) commandChannel);
+                tawk("Listening on chat /" + (string) commandChannel);
             }
 
         //  Help                        Give help information
@@ -323,19 +323,24 @@
 
             springCompression(TRUE);            // Show spring as compressed
 
+            //  Set non-physical and save owner identity
+
+            llSetStatus(STATUS_PHYSICS, FALSE);
+            owner = llGetOwner();
+
             //  Set initial modes
 
             flight = flying = FALSE;
 
             //  Start listening on the command chat channel
             commandH = llListen(commandChannel, "", NULL_KEY, "");
+            llOwnerSay("Listening on chat /" + (string) commandChannel + ".");
         }
 
-        //  When we're instantiated, set physics off and save our owner
+        //  When we're instantiated, reset script to restore default modes
 
         on_rez(integer num) {
-            llSetStatus(STATUS_PHYSICS, FALSE);
-            owner = llGetOwner();
+            llResetScript();                // Force script reset
         }
 
         /*  The listen event handler processes messages from
