@@ -1,0 +1,22 @@
+If you're afflicted with irritating roadrunners trespassing on your land, try this spring launcher: It Might Just Work!  When an avatar sits on the launcher, the spring is triggered and avatar and launcher are hurled into the sky, around 300 metres with the default settings.  After a specified interval (12 seconds by default), the user will be booted off the launcher in mid-air and fall to the ground (unless they start to fly and land more gracefully).  The launcher immediately returns to its starting location to welcome the next adventurer/victim.
+
+The launcher is a fully functional flying vehicle.  While riding the launcher, the avatar can use the arrow keys to steer it and the Page Up and Page Down keys to ascend and descend.  This only affects the position of the launcher while the avatar is seated; as soon as the launcher stands up, or is booted off, the launcher will still return to its original location.  Settings allow configuring the launcher as a pure flying machine, without the automatic launch and timed bail out, or to allow an avatar to turn off the bail out by taking control of the launcher and fly it manually.
+
+A development kit is included with texture and sound effects you may use in your builds.  The script may be modified or re-used as you wish.
+
+Source code for this project is maintained on and available from the GitHub repository:
+    https://github.com/Fourmilab/spring_launcher
+
+License
+----------
+
+This product (software, documents, images, and original models) is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License.
+    http://creativecommons.org/licenses/by-sa/4.0/
+    https://creativecommons.org/licenses/by-sa/4.0/legalcode
+You are free to copy and redistribute this material in any medium or format, and to remix, transform, and build upon the material for any purpose, including commercially.  You must give credit, provide a link to the license, and indicate if changes were made.  If you remix, transform, or build upon this material, you must distribute your contributions under the same license as the original.
+
+The coil spring used in this object is the:
+    COZI Heavy Duty Mesh Spring - 10 Coil, Black, FULL PERM
+    https://marketplace.secondlife.com/p/Heavy-Duty-Mesh-Spring-10-Coil-Black-FULL-PERM/6568283
+model available in the Second Life Marketplace.  Please see that page for the license and conditions of use for that component. 
+

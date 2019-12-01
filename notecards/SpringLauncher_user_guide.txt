@@ -1,0 +1,191 @@
+
+                    Fourmilab Spring Launcher
+                          User Guide
+
+If you're afflicted with irritating roadrunners trespassing on
+your land, try this spring launcher: It Might Just Work!  When
+an avatar sits on the launcher, the spring is triggered and
+avatar and launcher are hurled into the sky, around 300 metres
+with the default settings.  After a specified interval (12
+seconds by default), the user will be booted off the launcher in
+mid-air and fall to the ground (unless they start to fly and
+land more gracefully).  The launcher immediately returns to its
+starting location to welcome the next adventurer/victim.
+
+The launcher is a fully functional flying vehicle.  While riding
+the launcher, the avatar can use the arrow keys to steer it and
+the Page Up and Page Down keys to ascend and descend.  This only
+affects the position of the launcher while the avatar is seated;
+as soon as the avatar stands up, or is booted off, the launcher
+will still return to its original location.  Settings (see
+below) allow configuring the launcher as a pure flying machine,
+without the automatic launch and timed bail out, or to allow an
+avatar to turn off the bail out by taking control of the
+launcher and fly it manually.
+
+You can control the Spring Launcher with the following commands
+sent to local chat channel /1949 (the year the first Wile E.
+Coyote and Road Runner cartoon appeared).
+
+    access [owner/group/public]
+        Set which classes of users can send commands via chat.
+        The who parameter should be one of public (anybody),
+        group (members of the group to which the device
+        belongs), or owner (owner of the device only).  The
+        owner is always able to send commands regardless of this
+        setting.  Default owner.
+
+    channel n
+        Change the chat channel on which the device listens for
+        commands to n.  The new channel is echoed in chat to
+        confirm the change.  The channel is reset to the default
+        by the restart command.  Default 1949.
+
+    help
+        Give this document to the requester.
+
+    restart
+        Perform a hard restart, equivalent to creating a new
+        copy of the device.  If the chat channel has been
+        changed, it is reset to the default (1949, unless you've
+        changed it by editing the script).  If you unlink pieces
+        of the Spring Launcher, modify them, and then link them
+        back together, be sure that the root prim (the one you
+        link last) is the launcher and that you perform a
+        restart command before using the launcher.
+
+    set variable args
+        Set the named variable to the given argument(s).  The
+        following variables may be set.
+
+        bail t
+            Set the bail-out time to t in seconds.  An avatar
+            who sits on the launcher will be kicked off after
+            the specified number of seconds.  If you set t to 0,
+            the avatar will not be forcefully ejected and may
+            fly the launcher using the navigation keys and stand
+            up when done.  Default 12 seconds.
+
+        flight on/off
+            Controls "flight" mode.  By default, this is off,
+            and while an avatar launched can fly the platform
+            with the navigation keys, they will still be bounced
+            off at the end of the bail interval.  If set to on,
+            pressing any of the navigation keys will transform
+            the launcher into a vehicle the avatar can fly as
+            long as they wish, until standing up to end the
+            flight.  Upon entering flight mode, the spring below
+            the platform will be contracted. While setting
+            flight mode on or off is controlled by the access
+            command described above, if flight mode is enabled
+            any avatar seated on the platform may fly it.
+            Default off.
+
+        impulse n
+            Set the impulse applied to launch the platform when
+            an avatar sits on it.  The larger the impulse, the
+            higher the launcher will go.  If you set n to 0, the
+            platform will not be launched and the avatar may fly
+            it with the navigation keys.  Unless you also set
+            bail to 0, the avatar will still be ejected after
+            the bail-out time.  Default 25.
+
+        pause t
+            Set the pause in seconds between the time when the
+            avatar sits and the platform is launched and the
+            avatar's departing and the launcher descending.  If
+            you set this too short, you won't hear the sound
+            effects at full volume.  In addition, due to an
+            apparent race condition in handling scripting
+            events, if you set pause lower than 0.5 the launcher
+            will intermittently fail to launch when an avatar
+            sits on it.  Default 0.5 seconds.
+
+        trajectory x y z
+            Sets the trajectory upon which the platform is
+            launched when an avatar sits on it.  Specify x, y,
+            and z as floating point values in the region
+            co-ordinate system.  If you have a "skybox" floating
+            above your land with a terrace surrounding it, you
+            can put a spring launcher at ground level which
+            flings people to arrive on the terrace in a much
+            more exciting manner than mundane teleportation.
+            It's fussy getting the trajectory set correctly, but
+            worth it.  The default of 0 0 1 launches the
+            platform straight up.  The trajectory values are
+            normalised to a magnitude of 1: for example "10 20
+            30" is equivalent to a setting of "0.17 0.33 0.5".
+
+    status
+        Shows the current status of the device.
+
+Details
+
+    The Spring Launcher is supplied with full Copy and Modify
+    permissions; you are free to make as many copies as you wish
+    and to modify the model, script, and documents in any way
+    without any restrictions whatsoever.  You are not, however,
+    permitted to transfer or share the object with another
+    user.  The reason for this is that the spring model used in
+    the launcher:
+        https://marketplace.secondlife.com/p/Heavy-Duty-Mesh-Spring-10-Coil-Black-FULL-PERM/6568283
+    although sold with full permissions, has a user license
+    which prohibits builds that incorporate it being sold with
+    full permissions.  In order to allow you full copy and
+    modify permissions on this object, it is necessary to
+    prohibit transfer.  In a future version of this object I may
+    replace this spring with a model of my own, which will allow
+    removing this restriction.
+
+    If you install the launcher too close to the ground,
+    particularly in uneven terrain, when you sit on it it may
+    move horizontally instead of launching vertically.  This is
+    due to the launcher, which is a physical object as vehicles
+    must be, colliding with the terrain and having its course
+    altered.  To correct the problem, simply move the launcher
+    up a bit so it clears the terrain.
+
+Acknowledgements
+
+    The coil spring used in this object is the:
+        COZI Heavy Duty Mesh Spring - 10 Coil, Black, FULL PERM
+    available in the Second Life Marketplace at:
+        https://marketplace.secondlife.com/p/Heavy-Duty-Mesh-Spring-10-Coil-Black-FULL-PERM/6568283
+    The original model was scaled in the vertical axis to create
+    the compressed spring for the idle launcher.
+
+    The sound effects are free clips available from:
+        https://www.soundeffectsplus.com/
+    The launch sound is "Comical Comic Bang" (SFX 43134196):
+        https://www.soundeffectsplus.com/product/comical-comic-bang-01/
+    and the sound when an avatar is booted off the platform is
+    "Punch 02" (SFX 43343773):
+        https://www.soundeffectsplus.com/product/punch-02/
+    Both of these effects are © Copyright Finnolia Productions
+    Inc. and distributed under the Standard License:
+        https://www.soundeffectsplus.com/content/license/
+    The sound clips were prepared for use in this object with
+    the Audacity sound editor on Linux.
+
+    The Wile E. Coyote avatar used to illustrate the launcher
+    in flight on its Marketplace page is available from:
+        https://marketplace.secondlife.com/p/WILE-E-COYOTE-AVATAR-MESH-COMPLETE/17799849
+
+License
+
+This product (software, documents, images, and original models)
+is licensed under a Creative Commons Attribution-ShareAlike 4.0
+International License.
+    http://creativecommons.org/licenses/by-sa/4.0/
+    https://creativecommons.org/licenses/by-sa/4.0/legalcode
+You are free to copy and redistribute this material in any
+medium or format, and to remix, transform, and build upon the
+material for any purpose, including commercially.  You must give
+credit, provide a link to the license, and indicate if changes
+were made.  If you remix, transform, or build upon this
+material, you must distribute your contributions under the same
+license as the original.
+
+The coil spring model incorporated in this product is licensed
+as described in the Marketplace page cited above under
+"Acknowledgements".

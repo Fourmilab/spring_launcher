@@ -1,0 +1,9 @@
+Launches avatars into the air with a giant spring
+
+In the spirit of Wile E. Coyote and the Roadrunner
+
+Fully flyable as a vehicle
+
+Object and script may be modified as you wish
+
+Development kit includes textures, sound clips, and development log

@@ -1,0 +1,278 @@
+
+                    Fourmilab Spring Launcher
+                         Development Log
+          by John Walker  --  http://www.fourmilab.ch/
+
+2019 August 5
+
+After the better part of a week trying to figure out
+intermittent behaviour with this thing, here is my current
+theory.  What we observe is that the first few times we try it,
+it works as expected and repeatedly.  This is the case
+regardless of whether we apply a start impulse for a short time
+with:
+    llSetVehicleVectorParam(VEHICLE_LINEAR_MOTOR_DIRECTION)
+or llApplyImpulse(),  After a few rides, however, the effect
+"peters out" and we rise only a few metres, and this is
+repeatable.  However, if another avatar tries riding the
+platform, that works OK, even though it is now failing
+repeatedly for the first.
+
+My guess as to what's happening is that the rides are using up
+the avatar's Energy:
+    http://wiki.secondlife.com/wiki/Energy
+and that, when exhausted, the impulse applied to the platform is
+limited. I tried to diagnose this with llGetEnergy(), but when
+applied to the platform linked object, it always reports 1.0,
+regardless of whether the avatar is seated or not.  But if it's
+the avatar's energy that's the problem, querying the energy of
+the platform may not indicate thus.  I don't know any way to
+directly inquire the avatar's energy (if, in fact, such a thing
+exists).
+
+If this supposition is correct, then according to the Energy
+document the avatar's energy should "recharge" at the rate of
+200/mass units per second. But I don't know how this applies to
+avatars.  The Energy document says:
+    Under normal circumstances, an avatar is not subject to
+    energy concerns, but then goes on to say, in italics, "This
+    isn't precisely accurate... attachments on the avatar seem
+    to have the same energy limitations as unattached objects.
+Now, how does this apply when the avatar is linked to the object
+upon which it is sitting?  Crickets.
+
+Now, this is interesting.  I changed avatars from the one I'd
+been using to another (Grey), and suddenly the platform works
+again.  This is consistent with the "avatar energy" hypothesis.
+
+If I then switch back from Grey to the avatar that failed, that
+one failed again. But then, on the next try it worked once more,
+but then failed again the next time.
+
+Changed the outfit on the avatar which just failed.  Now it
+works again.  Perhaps, per that enigmatic statement about
+attachments having energy, it's the avatar's attachments that
+have run out of steam.  After the outfit change, the platform
+worked multiple times.
+
+Cleaned up a lot of dead code in the script which was put in
+trying this and that to solve the intermittent failures.
+
+Well, nothing makes any sense at all.  Changed the avatar again,
+this time to Trike, and it failed immediately, out of the box,
+but it worked on the next go, but then failed the next time.
+
+Changed to Squelette, and it worked the first time.  Worked, the
+second time, too, and then failed.
+
+Changed to Ratburger, and once again it worked, twice, then
+failed.
+
+Now, the maddening thing is, that once it fails, I can still use
+the Page Up key to rise into the sky, which makes the *identical
+API call* which the initial launch process does.
+
+2019 August 6
+
+After further experimentation, I've become increasingly
+convinced that what we're dealing with here is a race condition
+between an avatar's sitting on a prim and applying an impulse to
+it, whether via a vehicle motor or by a direct call such as
+llApplyImpulse().  The tip-off is that when the launch operation
+fails (made by an API call in the changed() event after an
+avatar sits), you can immediately make the identical call to
+apply a +Z impulse by pressing the Page Up key and it works just
+fine.  To test this theory, I implemented a simple-minded state
+machine based on an integer variable, tstate, which sequences
+sit and unsit operations.  When an avatar sits, I now initialise
+the vehicle parameters in changed(), but rather than applying
+the impulse immediately, I set tstate to 1 (its idle state is 0)
+and llSetTimerEvent(epause), where epause is set to an
+empirically-determined interval to avoid the race condition.
+When the timer fires, if tstate is 1, the
+VEHICLE_LINEAR_MOTOR_DIRECTION is set to apply the +Z impulse,
+tstate is set to 2, and if bail is nonzero, the timer is reset
+to perform the bail-out.
+
+When that timer expires, with tstate set to 2, the sound effect
+for ejecting the avatar is started, tstate is incremented to 3,
+and another timer is started for epause.  When that goes off,
+with tstate 3, the avatar is displaced and then llUnSit() is
+called, kicking it off, and tstate returns to 0, waiting for the
+next launch with no timer running.  The delay between playing
+the bail-out sound and unseating the avatar is to permit the
+avatar to hear the entire sound, which would be lost if the
+avatar was plummeting while the sound was playing.
+
+My initial experiment was with epause set to 1 (second).  This
+never failed.  I next reduced it to 0.25, which failed rarely,
+and finally settled on 0.5, which hasn't failed yet.
+
+Added code to save and restore the rotation of the platform
+across a ride as well as its original location.  Previously, if
+the user took over and flew the platform, it would return to its
+original position but with the last rotation before the user was
+ejected.
+
+2019 August 7
+
+Set the default impulse to 25 and bail time to 20 seconds.  This
+seems to work well, at least in the environment of Fourmilab
+Island.
+
+Added a "set pause" command to set the internal epause variable
+which specifies the delay between a sit/unsit event and the
+vehicle action resulting from it.
+
+Changed the default command channel to 1949.  This is the year
+the first Wile/Roadrunner cartoon appeared.
+
+Removed the useless "Energy" item from the stat display and
+replaced it with the setting of pause.
+
+Removed "Transfer" permission on the linked object.  This is
+required because we use a third-party full-permission spring
+object as a component, and its license does not permit
+redistribution with transfer permission.  Since the parent
+object is free, this isn't an onerous restriction.  If and when
+we replace the spring with a home-brew object, this restriction
+can be lifted.
+
+If bail was set to 0, we failed to cancel the timer set when
+entering tstate 1, which caused an immediate bail-out,  Fixed.
+I also reset tstate to 0 at the end of tstate 1 to indicate
+we're back in the idle state (this isn't really necessary, but
+it may avoid confusion if we add something elsewhere that looks
+at the state).
+
+After un-seating the avatar in tstate 3, we failed to cancel the
+timer which got us there, which resulted in unnecessary script
+activations.  Fixed.
+
+Setting bail to 0 now works.  After the launch, you can take
+over control at any time with the control keys, fly around, and
+when you stand, you're left wherever you were and the platform
+returns to its original position.
+
+2019 August 12
+
+Changed the default bail time to 12 seconds.  Testing with
+users indicates they're inclined to stand up themselves if
+you go much longer than this.
+
+2019 September 13
+
+Added a "set trajectory x y z" command to specify the trajectory
+upon which the platform is launched.  The default, 0 0 1,
+launches the platform straight up.  The trajectory is normalised
+to a magnitude of 1 and multiplied by the impulse setting to
+obtain the vector impulse applied to the platform.
+
+If you set impulse to 0, the platform will not be launched.  Set
+this if you wish to use the platform purely as a flying machine.
+Note that unless you also set bail to 0, you'll still be kicked
+off when the bail-out timer expires.
+
+Added the trajectory setting to the information displayed by the
+status command.
+
+Added an explanation to the User Guide why the device is sold
+without Transfer permission and an acknowledgement of the source
+of the spring model with a link to it on the Marketplace.
+
+2019 September 14
+
+Added the source of the sound clips for launch and bail to the
+User Guide, with links to the pages for each and to the license
+under which they are used.
+
+For users intrigued by the photo on the Marketplace page, added
+the source for the Wile E. Coyote avatar to the User Guide.
+
+Added a help command to give the User Guide notecard to the
+requester.
+
+Implemented a new "flight" mode, enabled with the command "set
+flight on".  When set, pressing any of the navigation control
+keys while riding the platform will disable the automatic bail
+out and contract the spring, converting the launcher into a
+vehicle the avatar can fly for as long as desired.  Standing up
+returns the launcher to its original position and leaves the
+avatar where they departed.  Flight mode is persistent until
+canceled with "set flight off", and may be used by any avatar
+(regardless of permissions) riding the launcher.
+
+Created a preliminary Marketplace page: the SKU is
+F1-936047-00003-3.
+
+2019 September 15
+
+Changed name and terminology from "Spring Platform" to "Spring
+Launcher".
+
+Added a screen shot to the Marketplace page showing the launcher
+being used as a flying vehicle.
+
+Added documentation of the "set flight" command to the User Guide.
+
+2019 September 17
+
+After an extended period of unscrewing the inscrutable, I've
+figured out the "launch sideways" problem I encountered on
+occasion when instantiating the launcher in a public sandbox.
+If the launcher was moved to be too close to the ground, when
+you sat on it, it would take off horizontally for a while, and
+then sometimes finally go vertical.  It turns out that this was
+due to our setting the object STATUS_PHYSICS to TRUE (which is
+required for a vehicle) when the user sat on it.  If the spring
+(either extended or compressed--both are linked to the root
+prim; we only control their visibility) intersected the terrain,
+this could cause a terrain collision which could make the
+vehicle veer off the intended vertical course.  The fix is to
+set the compressed and extended springs' Features/Physics Shape
+Type to None (as opposed to Convex Hull, which is default for
+mesh objects), which suppresses any interaction with the
+terrain.  Note that if the platform itself intersects the
+terrain (which may not be obvious, due to round-off of bounding
+boxes) you may still get squirrely behaviour at launch.  In case
+of trouble, simply move the platform up a bit to avoid any
+interference with the terrain.
+
+2019 November 29
+
+Added the YouTube video demonstration as a Video URL in the
+Marketplace listing and removed it from the Description.
+
+2019 December 1
+
+Added a list of valid Set variables to the message issued
+when an unknown variable is specified.
+
+Created local development Git repository in:
+    ~/w/SecondLife/SpringLauncher/git
+with:
+    git init
+
+Added and committed:
+    Special files (README.md, etc.)
+    Textures
+    Notecards (User Guide / Help file)
+    Marketplace (listing text, images)
+    Scripts
+    Sounds
+    Logs (this file)
+
+Logged on to github.com.
+
+Created a new repository:
+    spring_launcher
+with access URLs:
+    HTTPS: https://github.com/Fourmilab/spring_launcher.git
+    SSH:   git@github.com:Fourmilab/spring_launcher.git
+
+Pushed the production directory to the repository with:
+    git remote add origin git@github.com:Fourmilab/spring_launcher.git
+    git push -u origin master
+
+Confirmed that my local "git sync" command works with the remote
+repository.
