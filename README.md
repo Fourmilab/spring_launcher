@@ -5,6 +5,8 @@ is a fun addition to your property in the
 [Second Life](https://en.wikipedia.org/wiki/Second_Life) virtual world
 which brings a bit of Coyote and Roadrunner adventure to those who visit.
 
+![Fourmilab Spring Launcher](marketplace/images/spring_ride.png)
+
 If you're afflicted with irritating roadrunners trespassing on your land,
 try this spring launcher: It Might Just Work! When an avatar sits on the
 launcher, the spring is triggered and avatar and launcher are hurled into
